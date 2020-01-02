@@ -1,4 +1,3 @@
-
 public class ALU {
 
 	/**
@@ -91,21 +90,20 @@ public class ALU {
 		// 生成小数部分的二进制表示(若有)
 		StringBuilder afterDot = new StringBuilder();
 		if (strs.length > 1) {
-			float m = (float) (Integer.valueOf(strs[1])) * (float) Math.pow(10, -1 * strs[1].length());
-			// if (m == 0) {
-			// afterDot = new StringBuilder(allZeroWithLength(eLength + sLength + 1));
-			// } else {
-			// 最后一个1是为了能最后向0舍入
-
-			do {
-				if ((m *= 2) >= 1) {
-					m -= 1;
-					afterDot.append("1");
-				} else {
-					afterDot.append("0");
-				}
-			} while (m != 1 && beforeDot.length() + afterDot.length() <= eLength + sLength + 1 + 1);
-			// }
+			float m = (float) (Integer.valueOf(strs[1])) * (float) Math.pow(10, -strs[1].length());
+			if (m == 0) {
+				afterDot = new StringBuilder(allZeroWithLength(eLength + sLength + 1));
+			} else {
+				// 最后一个1是为了能最后向0舍入
+				do {
+					if ((m *= 2) >= 1) {
+						m -= 1;
+						afterDot.append("1");
+					} else {
+						afterDot.append("0");
+					}
+				} while (m != 1 && beforeDot.length() + afterDot.length() <= eLength + sLength + 1 + 1);
+			}
 		}
 		// 是否要规格化?
 		// 拼接整数和小数,且算出指数
@@ -114,7 +112,7 @@ public class ALU {
 		int bias = (int) Math.pow(2, eLength - 1) - 1;
 		if (beforeDot.toString().equals("")) {
 			e = normalize(afterDot.toString());
-			if (bias - e <= 0) {
+			if (bias - e < 0) {
 				// 反规格化
 				System.out.println(bias - e);
 				System.out.println(afterDot);
@@ -259,7 +257,7 @@ public class ALU {
 		while (tailNum.length() < dotPos) {
 			tailNum = tailNum + "0";
 		}
-		for (int i = dotPos - 1; i >= 0; i++) {
+		for (int i = dotPos - 1; i >= 0; i--) {
 			result += (float) (Math.pow(2, dotPos - 1 - i) * (tailNum.charAt(i) - 48));
 		}
 		for (int i = dotPos; i < sLength; i++) {
@@ -371,7 +369,7 @@ public class ALU {
 			result.insert(0, ts.substring(1, 5));
 			ci = ts.charAt(0);
 			i += 4;
-		} while (i <= length + 4);
+		} while (i <= length - 4);
 		while (result.length() < length) {
 			if (result.charAt(0) == '1') {
 				result.insert(0, "1");
@@ -485,9 +483,9 @@ public class ALU {
 	// 返回长为n的全0串
 	private String allZeroWithLength(int n) {
 		StringBuilder result = new StringBuilder();
-
-		result.append("0");
-
+		while (result.length() < n) {
+			result.append("0");
+		}
 		return result.toString();
 	}
 
